@@ -1,4 +1,4 @@
-# Library Management System using SQL Project --P2
+# Library Management System using SQL
 
 ## Project Overview
 
@@ -18,7 +18,7 @@ This project demonstrates the implementation of a Library Management System usin
 ## Project Structure
 
 ### 1. Database Setup
-![ERD](https://github.com/najirh/Library-System-Management---P2/blob/main/library_erd.png)
+![ERD](library_ERD.png)
 
 - **Database Creation**: Created a database named `library_db`.
 - **Table Creation**: Created tables for branches, employees, members, books, issued status, and return status. Each table includes relevant columns and relationships.
@@ -26,18 +26,17 @@ This project demonstrates the implementation of a Library Management System usin
 ```sql
 CREATE DATABASE library_db;
 
-DROP TABLE IF EXISTS branch;
-CREATE TABLE branch
-(
-            branch_id VARCHAR(10) PRIMARY KEY,
-            manager_id VARCHAR(10),
-            branch_address VARCHAR(30),
-            contact_no VARCHAR(15)
+CREATE TABLE branch(
+branch_id VARCHAR(10) PRIMARY KEY,
+manager_id VARCHAR(10),
+branch_address VARCHAR(50),
+contact_no VARCHAR(10)
 );
+ALTER TABLE branch
+ALTER COLUMN contact_no TYPE VARCHAR(20);
 
 
 -- Create table "Employee"
-DROP TABLE IF EXISTS employees;
 CREATE TABLE employees
 (
             emp_id VARCHAR(10) PRIMARY KEY,
@@ -45,12 +44,13 @@ CREATE TABLE employees
             position VARCHAR(30),
             salary DECIMAL(10,2),
             branch_id VARCHAR(10),
-            FOREIGN KEY (branch_id) REFERENCES  branch(branch_id)
+
+	-- Foreign Key Constraints
+	CONSTRAINT fk_branch FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
 
 -- Create table "Members"
-DROP TABLE IF EXISTS members;
 CREATE TABLE members
 (
             member_id VARCHAR(10) PRIMARY KEY,
@@ -62,7 +62,6 @@ CREATE TABLE members
 
 
 -- Create table "Books"
-DROP TABLE IF EXISTS books;
 CREATE TABLE books
 (
             isbn VARCHAR(50) PRIMARY KEY,
@@ -77,7 +76,6 @@ CREATE TABLE books
 
 
 -- Create table "IssueStatus"
-DROP TABLE IF EXISTS issued_status;
 CREATE TABLE issued_status
 (
             issued_id VARCHAR(10) PRIMARY KEY,
@@ -86,9 +84,11 @@ CREATE TABLE issued_status
             issued_date DATE,
             issued_book_isbn VARCHAR(50),
             issued_emp_id VARCHAR(10),
-            FOREIGN KEY (issued_member_id) REFERENCES members(member_id),
-            FOREIGN KEY (issued_emp_id) REFERENCES employees(emp_id),
-            FOREIGN KEY (issued_book_isbn) REFERENCES books(isbn) 
+
+	-- Foreign Key Constraints
+    	CONSTRAINT fk_members FOREIGN KEY (issued_member_id) REFERENCES members(member_id),
+    	CONSTRAINT fk_books FOREIGN KEY (issued_book_isbn) REFERENCES books(ISBN),
+    	CONSTRAINT fk_employees FOREIGN KEY (issued_emp_id) REFERENCES employees(emp_id) 
 );
 
 
@@ -102,7 +102,9 @@ CREATE TABLE return_status
             return_book_name VARCHAR(80),
             return_date DATE,
             return_book_isbn VARCHAR(50),
-            FOREIGN KEY (return_book_isbn) REFERENCES books(isbn)
+
+	-- Foreign Key Constraints
+	CONSTRAINT fk_issued_status FOREIGN KEY (issued_id) REFERENCES issued_status(issued_id)
 );
 
 ```
